@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bina's Portfolio | Cottage & Garden</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for Storybook & Vintage Aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'autumn-dark': '#1c130e',
+                        'autumn-bark': '#342217',
+                        'autumn-moss': '#2d3b24',
+                        'autumn-olive': '#4a5d35',
+                        'autumn-amber': '#d97706',
+                        'autumn-pumpkin': '#c2591e',
+                        'autumn-gold': '#e5a93c',
+                        'parchment-light': '#f5ede0',
+                        'parchment-base': '#e6d7bf',
+                        'parchment-dark': '#cca97c'
+                    },
+                    fontFamily: {
+                        storybook: ['"Crimson Text"', 'serif'],
+                        title: ['"Cinzel Decorative"', 'serif'],
+                        gothic: ['"UnifrakturMaguntia"', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles & Over the Garden Wall Vintage Textures */
+        body {
+            background-color: #120b07;
+            background-image: 
+                radial-gradient(#2d1e13 1px, transparent 1px), 
+                radial-gradient(#23150b 1px, #120b07 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            color: #2c1a0e;
+            font-family: 'Crimson Text', serif;
+        }
+
+        /* Parchment Texture effect */
+        .parchment-bg {
+            background: #e6d7bf;
+            background-image: radial-gradient(#d3c0a3 15%, transparent 16%), radial-gradient(#cbb493 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            border: 12px solid #5a3825;
+            border-image: linear-gradient(to bottom right, #5a3825, #342217, #24140b) 1 1 1 1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7), inset 0 0 50px rgba(74, 43, 20, 0.3);
+        }
+
+        .wood-border {
+            border: 8px solid #3c2415;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.6), inset 0 0 10px rgba(0,0,0,0.5);
+            background-color: #2b1a0e;
+        }
+
+        .wood-sign {
+            background: linear-gradient(180deg, #5c3822 0%, #3e2413 100%);
+            border: 5px solid #28160a;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8), inset 0 2px 4px rgba(255,255,255,0.2);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
+        }
+
+        /* Leaf Particle animation */
+        .leaf-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 50;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-5vh) rotate(0deg) translateX(0px);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(50vh) rotate(180deg) translateX(30px);
+            }
+            100% {
+                transform: translateY(105vh) rotate(360deg) translateX(-20px);
+                opacity: 0.2;
+            }
+        }
+
+        /* Custom Chimney Smoke */
+        .smoke {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: rgba(220, 210, 200, 0.4);
+            border-radius: 50%;
+            animation: smokeRise 4s infinite ease-out;
+            filter: blur(4px);
+        }
+
+        @keyframes smokeRise {
+            0% { transform: translateY(0) scale(0.6); opacity: 0.6; }
+            50% { opacity: 0.4; }
+            100% { transform: translateY(-70px) translateX(-20px) scale(2.2); opacity: 0; }
+        }
+
+        /* Speech bubble arrow */
+        .bubble-arrow::after {
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 8px;
+            border-style: solid;
+            border-color: transparent #f5ede0 transparent transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 14px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1c130e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4a301e;
+            border: 3px solid #1c130e;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c2591e;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen overflow-x-hidden">
+
+    <!-- Leaf Floating Particle Canvas Container -->
+    <div id="leaves-container" class="fixed inset-0 pointer-events-none z-40"></div>
+
+    <!-- Ambient Sound Button -->
+    <div class="fixed top-4 right-4 z-50">
+        <button id="audioToggleBtn" onclick="toggleAudio()" class="wood-sign text-amber-200 px-4 py-2 rounded-full font-bold flex items-center gap-2 hover:scale-105 transition-transform duration-300 border-2 border-amber-800">
+            <i id="audioIcon" class="fas me-1 fa-volume-mute text-autumn-amber"></i>
+            <span id="audioText" class="text-xs uppercase tracking-wider">Bosque Sonoro</span>
+        </button>
+    </div>
+
+    <!-- Main Container Framed by Garden Fences & Vines -->
+    <div class="max-w-5xl mx-auto px-4 py-6 relative">
+        
+        <!-- Left Side Ivy & Fence SVG Border (Desktop) -->
+        <div class="hidden lg:block absolute left-[-60px] top-40 bottom-0 w-16 pointer-events-none z-20">
+            <svg class="w-full h-full text-autumn-olive opacity-80" viewBox="0 0 50 1000" preserveAspectRatio="none">
+                <!-- Fence Pickets -->
+                <path d="M10,0 L25,0 L35,20 L35,1000 L10,1000 Z" fill="#2d1a10" stroke="#1c1109" stroke-width="2"/>
+                <!-- Ivy Vines -->
+                <path d="M20,20 Q40,100 15,200 T30,400 T10,600 T35,800 T20,1000" fill="none" stroke="#3a4f29" stroke-width="6"/>
+                <circle cx="35" cy="120" r="12" fill="#2d3b24"/>
+                <circle cx="15" cy="220" r="14" fill="#384a2d"/>
+                <circle cx="28" cy="420" r="10" fill="#2d3b24"/>
+                <circle cx="12" cy="630" r="15" fill="#425735"/>
+                <circle cx="32" cy="830" r="13" fill="#2d3b24"/>
+            </svg>
+        </div>
+
+        <!-- Right Side Ivy & Fence SVG Border (Desktop) -->
+        <div class="hidden lg:block absolute right-[-60px] top-40 bottom-0 w-16 pointer-events-none z-20">
+            <svg class="w-full h-full text-autumn-olive opacity-80" viewBox="0 0 50 1000" preserveAspectRatio="none">
+                <!-- Fence Pickets -->
+                <path d="M15,0 L30,0 L40,20 L40,1000 L15,1000 Z" fill="#2d1a10" stroke="#1c1109" stroke-width="2"/>
+                <!-- Ivy Vines -->
+                <path d="M30,30 Q10,130 35,230 T20,430 T40,630 T15,830 T30,1000" fill="none" stroke="#3a4f29" stroke-width="6"/>
+                <circle cx="15" cy="140" r="13" fill="#384a2d"/>
+                <circle cx="32" cy="250" r="11" fill="#2d3b24"/>
+                <circle cx="18" cy="450" r="15" fill="#425735"/>
+                <circle cx="36" cy="650" r="12" fill="#2d3b24"/>
+            </svg>
+        </div>
+
+        <!-- ================= HERO HEADER SECTION ================= -->
+        <header class="relative mb-12 text-center">
+            
+            <!-- Cottage House Visual Illustration SVG & Canvas -->
+            <div class="relative w-full h-80 sm:h-96 rounded-t-3xl overflow-hidden wood-border bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 flex flex-col justify-end items-center">
+                
+                <!-- Sky & Moon Background -->
+                <div class="absolute inset-0 bg-gradient-to-b from-[#191024] via-[#331a29] to-[#4a261d]">
+                    <!-- Glowing Autumn Moon -->
+                    <div class="absolute top-6 right-12 w-20 h-20 rounded-full bg-amber-200 opacity-80 shadow-[0_0_50px_rgba(251,191,36,0.6)]"></div>
+                    <!-- Stars -->
+                    <div class="absolute top-10 left-1/4 w-1 h-1 bg-amber-100 rounded-full animate-ping"></div>
+                    <div class="absolute top-16 left-1/2 w-1.5 h-1.5 bg-amber-200 rounded-full opacity-70"></div>
+                    <div class="absolute top-8 right-1/3 w-1 h-1 bg-amber-100 rounded-full opacity-80"></div>
+                </div>
+
+                <!-- Cottage Silhouette & Roof -->
+                <div class="relative w-full max-w-2xl h-64 flex justify-center items-end">
+                    
+                    <!-- Chimney with animated smoke -->
+                    <div class="absolute top-6 left-1/3 w-10 h-24 bg-amber-950 border-r-4 border-l-4 border-amber-900 z-0">
+                        <div class="smoke" style="animation-delay: 0s; left: 10px;"></div>
+                        <div class="smoke" style="animation-delay: 1.2s; left: 14px;"></div>
+                        <div class="smoke" style="animation-delay: 2.5s; left: 8px;"></div>
+                    </div>
+
+                    <!-- Roof Cottage Triangles -->
+                    <div class="absolute top-12 w-0 h-0 border-l-[160px] sm:border-l-[220px] border-l-transparent border-r-[160px] sm:border-r-[220px] border-r-transparent border-b-[120px] sm:border-b-[150px] border-b-[#3b1f13] z-10 filter drop-shadow-lg">
+                        <!-- Moss on roof -->
+                        <div class="absolute top-14 -left-36 w-24 h-6 bg-autumn-olive rounded-full transform -rotate-12 opacity-90"></div>
+                        <div class="absolute top-16 left-12 w-28 h-7 bg-autumn-moss rounded-full transform rotate-12 opacity-80"></div>
+                    </div>
+
+                    <!-- Cottage Main Wall -->
+                    <div class="w-72 sm:w-96 h-36 bg-[#4a2e1b] border-t-8 border-[#2d1b0f] z-10 relative flex justify-around items-end px-6 pb-0 shadow-2xl">
+                        
+                        <!-- Glowing Warm Window 1 -->
+                        <div class="w-12 h-16 bg-amber-400 rounded-t-full border-4 border-[#25150a] shadow-[0_0_25px_rgba(251,191,36,0.8)] relative flex items-center justify-center">
+                            <div class="w-full h-1 bg-[#25150a]"></div>
+                            <div class="h-full w-1 bg-[#25150a] absolute"></div>
+                        </div>
+
+                        <!-- Cottage Door -->
+                        <div class="w-16 h-24 bg-[#2b170c] border-4 border-[#180d06] rounded-t-full relative flex items-center justify-end pr-2">
+                            <div class="w-3 h-3 bg-amber-500 rounded-full shadow-md"></div>
+                        </div>
+
+                        <!-- Glowing Warm Window 2 -->
+                        <div class="w-12 h-16 bg-amber-400 rounded-t-full border-4 border-[#25150a] shadow-[0_0_25px_rgba(251,191,36,0.8)] relative flex items-center justify-center">
+                            <div class="w-full h-1 bg-[#25150a]"></div>
+                            <div class="h-full w-1 bg-[#25150a] absolute"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Fence & Foreground Vegetation Overlap -->
+                <div class="w-full h-14 bg-[#22140a] z-20 flex items-center justify-between px-4 border-t-4 border-autumn-bark relative">
+                    <!-- Wooden Fence Pickets Bottom -->
+                    <div class="absolute -top-8 left-0 right-0 flex justify-between px-2 pointer-events-none">
+                        <template id="fence-picker">
+                            <div class="w-6 h-12 bg-amber-950 border-2 border-amber-900 rounded-t-md transform rotate-1"></div>
+                        </template>
+                        <!-- Dynamic Fence Generation -->
+                        <div class="flex space-x-2 w-full justify-around">
+                            <div class="w-6 h-12 bg-[#382013] border-2 border-[#1c1009] rounded-t-md"></div>
+                            <div class="w-6 h-14 bg-[#382013] border-2 border-[#1c1009] rounded-t-md -mt-2"></div>
+                            <div class="w-6 h-12 bg-[#382013] border-2 border-[#1c1009] rounded-t-md"></div>
+                            <div class="w-6 h-16 bg-[#382013] border-2 border-[#1c1009] rounded-t-md -mt-4"></div>
+                            <div class="w-6 h-12 bg-[#382013] border-2 border-[#1c1009] rounded-t-md"></div>
+                            <div class="w-6 h-14 bg-[#382013] border-2 border-[#1c1009] rounded-t-md -mt-2"></div>
+                            <div class="w-6 h-12 bg-[#382013] border-2 border-[#1c1009] rounded-t-md"></div>
+                            <div class="w-6 h-16 bg-[#382013] border-2 border-[#1c1009] rounded-t-md -mt-4"></div>
+                            <div class="w-6 h-12 bg-[#382013] border-2 border-[#1c1009] rounded-t-md"></div>
+                            <div class="w-6 h-14 bg-[#382013] border-2 border-[#1c1009] rounded-t-md -mt-2"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Decorative Mushrooms & Pumpkins at Fence -->
+                    <div class="relative z-30 flex items-center gap-2">
+                        <span class="text-2xl filter drop-shadow-md">🎃</span>
+                        <span class="text-xl filter drop-shadow-md">🍄</span>
+                    </div>
+                    <div class="relative z-30 flex items-center gap-2">
+                        <span class="text-xl filter drop-shadow-md">🍄</span>
+                        <span class="text-2xl filter drop-shadow-md">🎃</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Wooden Hanging Sign Title (Bina's Portfolio) -->
+            <div class="relative -mt-10 z-30 flex justify-center">
+                <div class="wood-sign px-8 py-4 rounded-2xl max-w-lg text-center transform hover:scale-105 transition-transform duration-300">
+                    <div class="text-amber-400 font-gothic text-xl sm:text-2xl tracking-widest mb-1">Bienvenido al Huerto de</div>
+                    <h1 class="text-3xl sm:text-5xl font-bold font-title text-amber-100 tracking-wider">BINA'S PORTFOLIO</h1>
+                    <div class="flex justify-center items-center gap-3 mt-2 text-autumn-amber font-semibold text-sm sm:text-base">
+                        <span>✨ Animadora</span>
+                        <span>•</span>
+                        <span>🎨 Artista Digital</span>
+                        <span>•</span>
+                        <span>🌿 Illustradora</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bina Avatar & Welcome Speech Bubble (As sketched) -->
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto px-4">
+                <!-- Illustrated Avatar Avatar Frame -->
+                <div class="relative group cursor-pointer">
+                    <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-amber-800 overflow-hidden bg-autumn-bark shadow-xl relative z-10 transition-transform duration-300 group-hover:scale-110">
+                        <!-- SVG Avatar illustration representing Bina's Gothic/Cottage aesthetic -->
+                        <svg class="w-full h-full bg-[#2e1d15]" viewBox="0 0 100 100">
+                            <!-- Background glow -->
+                            <circle cx="50" cy="50" r="45" fill="#4a2e1b"/>
+                            <!-- Dark hair with horns/hood style -->
+                            <path d="M20,70 Q15,30 50,15 Q85,30 80,70 Q70,90 50,90 Q30,90 20,70 Z" fill="#181116"/>
+                            <path d="M25,35 Q10,15 30,25" fill="none" stroke="#181116" stroke-width="8" stroke-linecap="round"/>
+                            <path d="M75,35 Q90,15 70,25" fill="none" stroke="#181116" stroke-width="8" stroke-linecap="round"/>
+                            <!-- Face -->
+                            <ellipse cx="50" cy="55" rx="22" ry="25" fill="#e8d5c4"/>
+                            <!-- Eyes (Pale purple eerie look) -->
+                            <ellipse cx="42" cy="52" rx="4" ry="5" fill="#2d1b28"/>
+                            <ellipse cx="58" cy="52" rx="4" ry="5" fill="#2d1b28"/>
+                            <circle cx="43" cy="51" r="1.5" fill="#dfb3f0"/>
+                            <circle cx="59" cy="51" r="1.5" fill="#dfb3f0"/>
+                            <!-- Rosy Autumn Cheeks & Smile -->
+                            <circle cx="38" cy="60" r="3" fill="#c2591e" opacity="0.4"/>
+                            <circle cx="62" cy="60" r="3" fill="#c2591e" opacity="0.4"/>
+                            <path d="M46,65 Q50,69 54,65" fill="none" stroke="#4a2511" stroke-width="2" stroke-linecap="round"/>
+                            <!-- Crown of Leaves/Flower -->
+                            <circle cx="50" cy="30" r="4" fill="#e5a93c"/>
+                            <circle cx="40" cy="33" r="3" fill="#4a5d35"/>
+                            <circle cx="60" cy="33" r="3" fill="#4a5d35"/>
+                        </svg>
+                    </div>
+                    <!-- Glowing indicator -->
+                    <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-amber-500 border-2 border-amber-950 rounded-full flex items-center justify-center text-xs text-amber-950 font-bold z-20 shadow-md">
+                        👋
+                    </div>
+                </div>
+
+                <!-- Speech Bubble -->
+                <div class="relative bg-parchment-light text-autumn-bark p-4 rounded-2xl shadow-lg border-2 border-amber-900 max-w-sm text-left">
+                    <div class="hidden sm:block bubble-arrow"></div>
+                    <p class="font-storybook text-lg leading-snug">
+                        <span class="font-bold text-autumn-pumpkin">¡Hola y bienvenidos a mi rincón!</span> 🍂 Adéntrate en el huerto para descubrir mis animaciones, diseños de personajes e ilustraciones.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quick Navigation Wood Bar -->
+            <nav class="mt-8 flex flex-wrap justify-center gap-3 text-sm font-bold">
+                <a href="#introduccion" class="wood-sign text-amber-100 px-4 py-2 rounded-lg hover:text-amber-300 hover:border-amber-600 transition-all">📜 Introducción</a>
+                <a href="#demoreel" class="wood-sign text-amber-100 px-4 py-2 rounded-lg hover:text-amber-300 hover:border-amber-600 transition-all">🎬 Demo Reel</a>
+                <a href="#character-design" class="wood-sign text-amber-100 px-4 py-2 rounded-lg hover:text-amber-300 hover:border-amber-600 transition-all">🌰 Character Design</a>
+                <a href="#illustration" class="wood-sign text-amber-100 px-4 py-2 rounded-lg hover:text-amber-300 hover:border-amber-600 transition-all">🖼️ Illustration</a>
+            </nav>
+        </header>
+
+        <!-- ================= SECTION 1: INTRODUCCIÓN ================= -->
+        <section id="introduccion" class="mb-16 scroll-mt-6">
+            <div class="parchment-bg rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+                <!-- Decorative Corner Pumpkins & Foliage -->
+                <div class="absolute top-2 left-2 text-3xl pointer-events-none opacity-80">🌿</div>
+                <div class="absolute top-2 right-2 text-3xl pointer-events-none opacity-80">🍁</div>
+                <div class="absolute -bottom-3 -left-3 text-4xl pointer-events-none">🎃</div>
+                <div class="absolute -bottom-3 -right-3 text-4xl pointer-events-none">🍄</div>
+
+                <div class="max-w-3xl mx-auto text-center">
+                    <h2 class="text-3xl sm:text-4xl font-gothic text-autumn-bark mb-2 border-b-2 border-amber-800/30 pb-2 inline-block">
+                        ~ Introducción ~
+                    </h2>
+                    
+                    <p class="text-lg sm:text-xl font-storybook leading-relaxed text-amber-950 mt-4">
+                        Soy <span class="font-bold text-autumn-pumpkin">Bina</span>, artista digital, diseñadora de personajes y animadora 2D apasionada por las narrativas atmosféricas, lo misterioso, el folklore y el toque gótico-cozy estilo <em>Over the Garden Wall</em>.
+                    </p>
+                    
+                    <p class="text-base sm:text-lg font-storybook leading-relaxed text-amber-900/90 mt-3">
+                        Mi trabajo explora emociones profundas a través de líneas orgánicas, paletas otoñales ricas y personajes memorables. Explora los parterres del huerto a continuación para ver mis proyectos recientes y reel de animación.
+                    </p>
+
+                    <!-- Skill Tags -->
+                    <div class="flex flex-wrap justify-center gap-2 mt-6">
+                        <span class="bg-amber-900/10 border border-amber-900/30 text-amber-950 px-3 py-1 rounded-full text-sm font-semibold">2D Animation</span>
+                        <span class="bg-amber-900/10 border border-amber-900/30 text-amber-950 px-3 py-1 rounded-full text-sm font-semibold">Concept Art</span>
+                        <span class="bg-amber-900/10 border border-amber-900/30 text-amber-950 px-3 py-1 rounded-full text-sm font-semibold">Character Turnarounds</span>
+                        <span class="bg-amber-900/10 border border-amber-900/30 text-amber-950 px-3 py-1 rounded-full text-sm font-semibold">Lyric Video Art</span>
+                        <span class="bg-amber-900/10 border border-amber-900/30 text-amber-950 px-3 py-1 rounded-full text-sm font-semibold">Storyboarding</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: DEMO REEL ================= -->
+        <section id="demoreel" class="mb-16 scroll-mt-6">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center gap-2 text-amber-400 font-gothic text-3xl sm:text-4xl">
+                    <span>🏮</span>
+                    <h2>Demo Reel</h2>
+                    <span>🏮</span>
+                </div>
+                <p class="text-amber-200/80 font-storybook text-base">Reel de animación & proyectos en movimiento</p>
+            </div>
+
+            <!-- Video Player Styled Container Frame -->
+            <div class="wood-border rounded-3xl p-4 sm:p-6 bg-gradient-to-b from-[#24150c] to-[#170c06] relative shadow-2xl">
+                <!-- Glowing Corner Lanterns -->
+                <div class="absolute -top-4 -left-4 w-10 h-10 bg-amber-500/20 border-2 border-amber-600 rounded-full flex items-center justify-center text-xl shadow-[0_0_20px_rgba(245,158,11,0.6)] animate-pulse">
+                    🕯️
+                </div>
+                <div class="absolute -top-4 -right-4 w-10 h-10 bg-amber-500/20 border-2 border-amber-600 rounded-full flex items-center justify-center text-xl shadow-[0_0_20px_rgba(245,158,11,0.6)] animate-pulse">
+                    🕯️
+                </div>
+
+                <!-- Video Display Area -->
+                <div class="relative aspect-video w-full rounded-2xl overflow-hidden bg-black border-2 border-amber-950 group">
+                    
+                    <!-- Thumbnail preview image mimicking Bina's Fairytale animation artwork -->
+                    <img id="reelThumbnail" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop" alt="Demo Reel Cover" class="w-full h-full object-cover brightness-75 group-hover:scale-105 transition-transform duration-700">
+                    
+                    <!-- Overlay dark gradient -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+                    <!-- Custom Center Play Button -->
+                    <button onclick="openVideoModal()" class="absolute inset-0 m-auto w-20 h-20 bg-autumn-pumpkin/90 hover:bg-autumn-amber text-amber-100 rounded-full flex items-center justify-center border-4 border-amber-200/80 shadow-[0_0_30px_rgba(194,89,30,0.8)] transition-all duration-300 transform group-hover:scale-110">
+                        <i class="fas fa-play text-2xl ml-1"></i>
+                    </button>
+
+                    <!-- Title Banner inside player -->
+                    <div class="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+                        <div>
+                            <span class="bg-autumn-pumpkin text-amber-100 text-xs px-2.5 py-1 rounded-md font-bold uppercase tracking-wider">Destacado</span>
+                            <h3 class="text-xl sm:text-2xl font-title text-amber-100 mt-1 drop-shadow-md">"Fairytale" & Character Animation Reel</h3>
+                        </div>
+                        <span class="text-amber-300 text-sm font-semibold bg-black/60 px-3 py-1 rounded-full border border-amber-900">02:15</span>
+                    </div>
+                </div>
+
+                <!-- Footer Video Info -->
+                <div class="mt-4 flex flex-col sm:flex-row justify-between items-center text-amber-200/80 text-sm gap-2 px-2">
+                    <p class="font-storybook">🎵 "Fairytale" by Alexander Rybak - Animated Short & Design compilation by Bina</p>
+                    <button onclick="openVideoModal()" class="text-autumn-amber hover:underline font-bold flex items-center gap-1">
+                        Ver a pantalla completa <i class="fas fa-expand text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: CHARACTER DESIGN ================= -->
+        <section id="character-design" class="mb-16 scroll-mt-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-8 border-b-2 border-amber-900/40 pb-4">
+                <div>
+                    <h2 class="text-3xl sm:text-4xl font-gothic text-amber-400 flex items-center gap-3">
+                        <span>🌰</span> Character Design
+                    </h2>
+                    <p class="text-amber-200/70 font-storybook">Diseño de personajes, conceptos & expresiones</p>
+                </div>
+                <div class="mt-3 sm:mt-0 bg-autumn-bark px-4 py-1.5 rounded-full border border-amber-800 text-amber-300 text-sm font-semibold">
+                    Sección Huerto #1
+                </div>
+            </div>
+
+            <!-- Grid styled like Orchard / Veggie Patch Boards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="character-grid">
+                <!-- Card 1 -->
+                <div class="wood-border rounded-2xl overflow-hidden bg-autumn-bark group hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openLightbox('The Woodsman & Pumpkin Witch', 'Character concept design for autumn dark fairytale project.', 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=800&auto=format&fit=crop', 'Concept Art')">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=800&auto=format&fit=crop" alt="Character Concept 1" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-3 right-3 bg-autumn-bark/90 text-amber-300 text-xs px-2.5 py-1 rounded-full border border-amber-700">Concept Art</div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-autumn-dark via-transparent opacity-60"></div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-title text-amber-100 group-hover:text-autumn-gold transition-colors">The Woodsman & Witch</h3>
+                        <p class="text-sm font-storybook text-amber-200/70 mt-1 line-clamp-2">Exploración de siluetas y vestuario cottagecore gótico con elementos vegetales.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="wood-border rounded-2xl overflow-hidden bg-autumn-bark group hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openLightbox('Bina & Masked Companion', 'Character dynamics and turnarounds.', 'https://images.unsplash.com/photo-1508873696983-2df515122519?q=80&w=800&auto=format&fit=crop', 'Model Sheet')">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1508873696983-2df515122519?q=80&w=800&auto=format&fit=crop" alt="Character Concept 2" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-3 right-3 bg-autumn-bark/90 text-amber-300 text-xs px-2.5 py-1 rounded-full border border-amber-700">Model Sheet</div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-autumn-dark via-transparent opacity-60"></div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-title text-amber-100 group-hover:text-autumn-gold transition-colors">Masked Spirit & Traveler</h3>
+                        <p class="text-sm font-storybook text-amber-200/70 mt-1 line-clamp-2">Diseños expresivos con máscaras inspiradas en criaturas del bosque profundo.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="wood-border rounded-2xl overflow-hidden bg-autumn-bark group hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openLightbox('Autumn Lovers', 'Romantic dark fairytale illustration & character sheet.', 'https://images.unsplash.com/photo-1511497584788-876761c11969?q=80&w=800&auto=format&fit=crop', 'Expressions')">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1511497584788-876761c11969?q=80&w=800&auto=format&fit=crop" alt="Character Concept 3" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-3 right-3 bg-autumn-bark/90 text-amber-300 text-xs px-2.5 py-1 rounded-full border border-amber-700">Expressions</div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-autumn-dark via-transparent opacity-60"></div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-title text-amber-100 group-hover:text-autumn-gold transition-colors">Autumn Lovers & Creatures</h3>
+                        <p class="text-sm font-storybook text-amber-200/70 mt-1 line-clamp-2">Hojas de expresiones emocionales, sombreados cálidos y texturas orgánicas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 4: ILLUSTRATION ================= -->
+        <section id="illustration" class="mb-16 scroll-mt-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 border-b-2 border-amber-900/40 pb-4">
+                <div>
+                    <h2 class="text-3xl sm:text-4xl font-gothic text-amber-400 flex items-center gap-3">
+                        <span>🖼️</span> Illustration
+                    </h2>
+                    <p class="text-amber-200/70 font-storybook">Galería de obras ilustradas & Lyric Art</p>
+                </div>
+                
+                <!-- Category Filter Buttons -->
+                <div class="flex flex-wrap gap-2 mt-4 sm:mt-0">
+                    <button onclick="filterArt('all')" class="art-filter-btn active wood-sign px-3 py-1 rounded-lg text-xs text-amber-200 hover:text-white">Todos</button>
+                    <button onclick="filterArt('lyric')" class="art-filter-btn wood-sign px-3 py-1 rounded-lg text-xs text-amber-200 hover:text-white">Lyric Art</button>
+                    <button onclick="filterArt('gothic')" class="art-filter-btn wood-sign px-3 py-1 rounded-lg text-xs text-amber-200 hover:text-white">Dark Fantasy</button>
+                    <button onclick="filterArt('cottage')" class="art-filter-btn wood-sign px-3 py-1 rounded-lg text-xs text-amber-200 hover:text-white">Cottagecore</button>
+                </div>
+            </div>
+
+            <!-- Illustration Gallery Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="illustration-grid">
+                
+                <!-- Item 1 -->
+                <div class="art-item lyric wood-border rounded-xl overflow-hidden bg-autumn-bark group cursor-pointer relative" onclick="openLightbox('Holy Mary / Lyric Art', 'Ilustración inspirada en canciones con tipografía gestual.', 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=800&auto=format&fit=crop', 'Lyric Art')">
+                    <div class="aspect-square overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="text-amber-100 font-title text-sm border-2 border-amber-200 px-3 py-1 rounded-full bg-black/60">Ver Arte</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-autumn-bark">
+                        <h4 class="font-title text-amber-100 text-sm truncate">Ghost / Song Cover Art</h4>
+                        <span class="text-xs text-autumn-amber font-semibold">Lyric Art</span>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="art-item gothic wood-border rounded-xl overflow-hidden bg-autumn-bark group cursor-pointer relative" onclick="openLightbox('Fairytale Woods', 'Arte conceptual para cortometraje animado.', 'https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=800&auto=format&fit=crop', 'Dark Fantasy')">
+                    <div class="aspect-square overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="text-amber-100 font-title text-sm border-2 border-amber-200 px-3 py-1 rounded-full bg-black/60">Ver Arte</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-autumn-bark">
+                        <h4 class="font-title text-amber-100 text-sm truncate">The Wandering Forest</h4>
+                        <span class="text-xs text-autumn-amber font-semibold">Dark Fantasy</span>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="art-item cottage wood-border rounded-xl overflow-hidden bg-autumn-bark group cursor-pointer relative" onclick="openLightbox('Cottage Tea & Mushrooms', 'Ilustración estilo goblincore con acuarela digital.', 'https://images.unsplash.com/photo-1509114397022-ed747cca3f65?q=80&w=800&auto=format&fit=crop', 'Cottagecore')">
+                    <div class="aspect-square overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="text-amber-100 font-title text-sm border-2 border-amber-200 px-3 py-1 rounded-full bg-black/60">Ver Arte</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-autumn-bark">
+                        <h4 class="font-title text-amber-100 text-sm truncate">Harvest Moon Cottage</h4>
+                        <span class="text-xs text-autumn-amber font-semibold">Cottagecore</span>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="art-item lyric wood-border rounded-xl overflow-hidden bg-autumn-bark group cursor-pointer relative" onclick="openLightbox('You Go Down / Lyric Art', 'Ilustración con estética retro psicodélica y gótica.', 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800&auto=format&fit=crop', 'Lyric Art')">
+                    <div class="aspect-square overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="text-amber-100 font-title text-sm border-2 border-amber-200 px-3 py-1 rounded-full bg-black/60">Ver Arte</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-autumn-bark">
+                        <h4 class="font-title text-amber-100 text-sm truncate">Burn The Old Self</h4>
+                        <span class="text-xs text-autumn-amber font-semibold">Lyric Art</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= FOOTER / CONTACT SECTION ================= -->
+        <footer class="wood-sign rounded-3xl p-8 text-center relative overflow-hidden">
+            <div class="max-w-md mx-auto">
+                <div class="text-4xl mb-2">🍂</div>
+                <h3 class="text-2xl font-gothic text-amber-200">¿Quieres colaborar en un proyecto?</h3>
+                <p class="text-amber-100/80 font-storybook mt-2 mb-6 text-sm">
+                    Disponible para trabajos de animación 2D, diseño de personajes e ilustraciones por encargo.
+                </p>
+
+                <!-- Contact Buttons -->
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="mailto:bina.art@example.com" class="bg-autumn-pumpkin hover:bg-autumn-amber text-amber-100 font-bold px-5 py-2.5 rounded-full border border-amber-400/30 flex items-center gap-2 transition-all shadow-md hover:scale-105">
+                        <i class="fas fa-envelope"></i> Email Contact
+                    </a>
+                    <a href="https://instagram.com" target="_blank" class="bg-autumn-bark hover:bg-amber-900 text-amber-200 font-bold px-5 py-2.5 rounded-full border border-amber-700 flex items-center gap-2 transition-all shadow-md hover:scale-105">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a>
+                </div>
+
+                <div class="mt-8 pt-4 border-t border-amber-800/50 text-xs text-amber-300/60 font-storybook">
+                    © <span id="year"></span> Bina's Portfolio • Crafted with Cottagecore & Goblincore Love 🎃
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ================= MODALS & LIGHTBOX ================= -->
+
+    <!-- Image Lightbox Modal -->
+    <div id="lightboxModal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeLightbox()">
+        <div class="relative max-w-4xl w-full wood-border rounded-2xl bg-autumn-bark p-4 sm:p-6 text-amber-100" onclick="event.stopPropagation()">
+            <!-- Close Button -->
+            <button onclick="closeLightbox()" class="absolute top-4 right-4 w-10 h-10 bg-autumn-pumpkin text-amber-100 rounded-full flex items-center justify-center font-bold text-xl hover:bg-autumn-amber border border-amber-300 shadow-lg z-10">
+                ✕
+            </button>
+            <div class="flex flex-col md:flex-row gap-6 items-center">
+                <div class="w-full md:w-2/3 max-h-[70vh] overflow-hidden rounded-xl border-2 border-amber-900">
+                    <img id="lightboxImg" src="" alt="Enlarged Art" class="w-full h-full object-contain max-h-[70vh]">
+                </div>
+                <div class="w-full md:w-1/3">
+                    <span id="lightboxTag" class="bg-autumn-pumpkin text-amber-100 text-xs px-3 py-1 rounded-full font-bold">Category</span>
+                    <h3 id="lightboxTitle" class="text-2xl font-title text-amber-200 mt-3">Artwork Title</h3>
+                    <p id="lightboxDesc" class="text-amber-100/80 font-storybook mt-3 leading-relaxed text-sm">Description of the artwork.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Reel Modal -->
+    <div id="videoModal" class="fixed inset-0 bg-black/95 z-50 hidden flex items-center justify-center p-4 backdrop-blur-md" onclick="closeVideoModal()">
+        <div class="relative max-w-4xl w-full wood-border rounded-2xl bg-black p-2 sm:p-4" onclick="event.stopPropagation()">
+            <button onclick="closeVideoModal()" class="absolute -top-4 -right-4 w-10 h-10 bg-autumn-pumpkin text-amber-100 rounded-full flex items-center justify-center font-bold text-xl hover:bg-autumn-amber border border-amber-300 shadow-lg z-10">
+                ✕
+            </button>
+            <div class="aspect-video w-full">
+                <!-- Embedded Demo Video Container / Mock player -->
+                <iframe id="videoIframe" class="w-full h-full rounded-xl" src="" title="Bina Animation Reel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        // Set dynamic current year in footer
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        // 1. Autumn Leaf Particles Generator
+        const leavesContainer = document.getElementById('leaves-container');
+        const leafEmojis = ['🍂', '🍁', '🍃', '🌾'];
+
+        function createLeaf() {
+            const leaf = document.createElement('div');
+            leaf.className = 'leaf-particle';
+            leaf.innerText = leafEmojis[Math.floor(Math.random() * leafEmojis.length)];
+            leaf.style.left = Math.random() * 100 + 'vw';
+            leaf.style.animationDuration = (Math.random() * 8 + 6) + 's';
+            leaf.style.fontSize = (Math.random() * 14 + 14) + 'px';
+            leaf.style.opacity = Math.random() * 0.7 + 0.3;
+            leavesContainer.appendChild(leaf);
+
+            setTimeout(() => {
+                leaf.remove();
+            }, 14000);
+        }
+
+        // Generate leaves continuously
+        setInterval(createLeaf, 800);
+
+        // 2. Interactive Lightbox Modal
+        function openLightbox(title, desc, imgSrc, category) {
+            document.getElementById('lightboxTitle').innerText = title;
+            document.getElementById('lightboxDesc').innerText = desc;
+            document.getElementById('lightboxImg').src = imgSrc;
+            document.getElementById('lightboxTag').innerText = category;
+            
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightboxModal').classList.add('hidden');
+        }
+
+        // 3. Demo Reel Video Modal
+        function openVideoModal() {
+            const modal = document.getElementById('videoModal');
+            // Using a cozy animation reel placeholder video link
+            document.getElementById('videoIframe').src = "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1"; 
+            modal.classList.remove('hidden');
+        }
+
+        function closeVideoModal() {
+            const modal = document.getElementById('videoModal');
+            document.getElementById('videoIframe').src = "";
+            modal.classList.add('hidden');
+        }
+
+        // 4. Gallery Category Filter Logic
+        function filterArt(category) {
+            const items = document.querySelectorAll('.art-item');
+            items.forEach(item => {
+                if (category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Update button styles
+            const buttons = document.querySelectorAll('.art-filter-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('border-amber-400', 'text-amber-300');
+            });
+        }
+
+        // 5. Forest Ambient Sound Audio Oscillator (Web Audio API)
+        let audioCtx = null;
+        let isPlaying = false;
+        let noiseNode = null;
+
+        function toggleAudio() {
+            const audioIcon = document.getElementById('audioIcon');
+            const audioText = document.getElementById('audioText');
+
+            if (!isPlaying) {
+                // Initialize Web Audio API for warm crackling forest wind
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                // Create white noise buffer for crackling leaves/wind
+                const bufferSize = audioCtx.sampleRate * 2;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const output = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+
+                noiseNode = audioCtx.createBufferSource();
+                noiseNode.buffer = buffer;
+                noiseNode.loop = true;
+
+                // Lowpass filter for cozy ambient wind sound
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 400;
+
+                const gainNode = audioCtx.createGain();
+                gainNode.gain.value = 0.05; // Gentle background volume
+
+                noiseNode.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                noiseNode.start();
+                isPlaying = true;
+
+                audioIcon.className = "fas fa-volume-up text-amber-400 animate-bounce";
+                audioText.innerText = "Bosque Activo";
+            } else {
+                if (noiseNode) {
+                    noiseNode.stop();
+                }
+                isPlaying = false;
+                audioIcon.className = "fas fa-volume-mute text-autumn-amber";
+                audioText.innerText = "Bosque Sonoro";
+            }
+        }
+    </script>
+</body>
+</html>
